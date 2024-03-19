@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-fill Amount</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="">
+        <table id="medicineTable" class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Medicine Name</th>
+                    <th>Batch id</th>
+                    <th>Expiry</th>
+                    <th>Stock</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                    <th><button id="addRowBtn" class="phra-add-btn">Add Row +</button></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="search-container">
+                            <input type="text" id="medicine_name" name="medicine_name" placeholder="Medicine Name" class="phar-cust-field" onfocus="toggleDropdown('MedmyDropdown')">
+                            <div class="search-dropdown" id="MedmyDropdown">
+                                {% for item in med_obj %}
+                                <a href="#" class="dropdown-item" onclick="fetchText(this,'MedmyDropdown')">{{ item.medicine_name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="hidden" id="medicineid" name="medicineid" value="hidden_value" class="phar-cust-field">
+                        <input type="text" id="batchnumber" name="batchnumber" class="phar-cust-field" placeholder="Batch No#" readonly>
+                    </td>
+                    <td>
+                        <input type="text" id="expdate" name="expdate" class="phar-cust-field" placeholder="Expiry Date" readonly>
+                    </td>
+                    <td>
+                        <input type="text" id="stock" name="stock" class="phar-cust-field" placeholder="Stock" readonly>
+                    </td>
+                    <td>
+                        <input type="text" id="quantity" name="quantity" class="phar-cust-field" placeholder="Quantity">
+                    </td>
+                    <td>
+                        <input type="text" id="amount" name="amount" class="phar-cust-field" placeholder="Amount">
+                        <input type="hidden" id="backend_amount" value="10.00">
+
+                    </td>
+                    <td>
+                        <button class="removeBtn" onclick="removeRow(this)" style="display: none;">Delete Row</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="phar-btn-sec">
+        <div class="error-message" id="errorMessage"></div>
+        {% if error_message %}
+        <div class="error-message">
+            {{error_message}}
+        </div>
+        {% endif %}
+        <div>
+            <button type="submit" id="submitBtn" class="phar-btn-submit">Print</button>
+        </div>
+        <div>
+            <a href="{% url 'dashboard:createinvoice'%}" class="phar-btn-Cancel">New Invoice</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleDropdown(dropdownId) {
+            var dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = "block";
+            dropdown.addEventListener("click", function(event) {
+                if (event.target.classList.contains("dropdown-item")) {
+                    dropdown.style.display = "none";
+                }
+            });
+        }
+
+        function fetchText(element, dropdownId) {
+            event.preventDefault();
+            var linkText = element.innerText;
+            if (dropdownId === "MedmyDropdown") {
+                $.ajax({
+                    url: '/createinvoice/',
+                    type: 'GET',
+                    data: {
+                        'search': linkText,
+                        'param': 'medicine'
+                    },
+                    success: function(data) {
+                        var currentRow = element.closest("tr");
+                        currentRow.querySelector('.phar-cust-field[name="medicine_name"]').value = data.medicine_name;
+                        currentRow.querySelector('.phar-cust-field[name="batchnumber"]').value = data.batch_number;
+                        currentRow.querySelector('.phar-cust-field[name="expdate"]').value = data.exp_date;
+                        currentRow.querySelector('.phar-cust-field[name="stock"]').value = data.exp_date;
+                        currentRow.querySelector('.phar-cust-field[name="medicineid"]').value = data.medicine_id;
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function() {
+            $('#quantity').on('input', function() {
+                var quantity = $(this).val();
+                var backendAmount = parseFloat($('#backend_amount').val());
+                var amount = parseFloat(quantity) * backendAmount;
+                $('#amount').val(amount.toFixed(2));
+            });
+        });
+    </script>
+</body>
+</html>

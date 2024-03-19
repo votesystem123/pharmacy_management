@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{% load static %}    
+<html lang="en">     
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{STATIC_URL}}images/logo-run-white.png">
+        <title>Pharmacy</title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>
+
+    <body class="login_body">
+            <div class="login_main">
+                <div class="login_card_content">
+                    <div class="login_card_title">
+                        <h2>LOGIN</h2>
+                        <div class="underline-title"></div>
+                    </div>
+                    <p class="error_warning">{{ error_message }}</p>
+                    <form method="post" class="login_form">
+                        {% csrf_token %}
+                        <label for="user-email" style="padding-top:13px">
+                            &nbsp;Email
+                          </label>
+                        {{ form.email }}
+                        <div class="form-border"></div>
+                        <label for="user-password" style="padding-top:22px">&nbsp;Password
+                          </label>
+                        {{ form.password }}
+                        <div class="form-border"></div>
+                        <input class="submit-btn" type="submit" name="submit" value="LOGIN" />
+                        {% comment %} <a href="{% url 'dashboard:register' %}" class="signup">Don't have account yet?</a> {% endcomment %}
+                    </form>
+                </div>
+            </div>
+    </body>
+</html>
